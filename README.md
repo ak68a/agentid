@@ -6,32 +6,47 @@
 
 > **Active Development** — Core features are being implemented and tested. Not ready for production use.
 
-Go + Solidity toolkit for verifiable agent identity, built on the [ACK-ID specification](https://www.agentcommercekit.com/ack-id/introduction).
+Go + Solidity toolkit for on-chain agent identity verification, delegation, and revocation.
 
 ## Thesis
 
-Machine-to-machine payment protocols like [MPP](https://mpp.dev/) (Stripe/Tempo) and [ACK-Pay](https://www.agentcommercekit.com/ack-pay/introduction) solve *how* agents pay each other, but not *who* is paying or *who authorized it*. MPP's model is "payment is the credential" — there's no identity layer. ACK-ID handles identity off-chain via controller credentials and A2A handshakes, but has no on-chain component.
+The agent commerce stack is forming around open protocols: [MPP](https://mpp.dev/) (Stripe/Tempo) for payments, [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004) for discovery and reputation, and [ACK-ID](https://www.agentcommercekit.com/ack-id/introduction) for off-chain identity. But none of them answer: **is this agent authorized to do this specific thing?**
 
-agentid-core fills this gap: **on-chain identity verification for autonomous agents**. It provides the building blocks to verify an agent's identity, check its delegation authority, and enforce revocation — all within a smart contract during payment settlement. No trusted third party, no off-chain API call, no replay window.
+- MPP's model is "payment is the credential" — no identity layer
+- ERC-8004 provides discovery and reputation but [explicitly cannot](https://eips.ethereum.org/EIPS/eip-8004) cryptographically verify advertised capabilities
+- ACK-ID handles off-chain identity (controller credentials, A2A handshakes) but has no on-chain component
 
-This matters when:
-- Agents transact with agents they've never seen before (no prior handshake)
-- Delegation chains need to be publicly auditable (who authorized this agent to spend?)
-- Revocation must be instant and global, not dependent on checking a list
-- Identity verification and payment should be atomic (one transaction, all-or-nothing)
+AgentID fills this gap: **on-chain delegation and authorization verification for autonomous agents.** It provides cryptographic proof that an agent was authorized by a specific principal, with scoped capabilities, depth-limited delegation chains, and instant revocation — verifiable in a smart contract during payment settlement.
+
+### Where AgentID fits
+
+| Question | Protocol |
+|----------|----------|
+| How do I find this agent? | [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004) — on-chain registry, agent card, reputation |
+| Who is this agent? | [ACK-ID](https://www.agentcommercekit.com/ack-id/introduction) — off-chain controller credentials, A2A handshakes |
+| **Is this agent authorized to do this?** | **AgentID** — on-chain delegation chains, capability scoping, revocation |
+| How does this agent pay? | [MPP](https://mpp.dev/) — HTTP 402, multi-method settlement |
+
+### Integration strategy
+
+AgentID is designed to plug into the existing ecosystem, not compete with it:
+
+1. **ERC-8004**: Store AgentID delegation roots as agent metadata. Act as a [ValidationRegistry](https://eips.ethereum.org/EIPS/eip-8004) validator for delegation chain verification.
+2. **MPP**: Verify agent delegation authority during payment settlement — atomic identity + payment in one transaction.
+3. **ACK-ID**: Compatible key infrastructure (secp256k1, DIDs). On-chain complement to ACK-ID's off-chain credentials.
 
 ## Features
 
 - Agent keypair generation (secp256k1, ACK-compatible DIDs)
 - Structured delegation claim signing (EIP-712-ready)
 - Delegation chains with depth limits and constraint propagation
-- Solidity contracts for on-chain identity registry and delegation verification
+- Solidity contracts for on-chain delegation verification
 - Revocation claims and revocation list management
 
 ## Project Structure
 
 ```
-agentid-core/
+agentid/
 ├── pkg/
 │   ├── key/            # Agent keypair generation and management
 │   ├── models/         # Claims, delegations, revocations, constraints
@@ -101,4 +116,5 @@ Apache License 2.0 — see [LICENSE](./LICENSE).
 ## Acknowledgments
 
 - [Agent Commerce Kit](https://www.agentcommercekit.com) for the ACK-ID specification
-- [Ethereum Foundation](https://ethereum.org) for EIP-712
+- [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004) for the on-chain agent registry standard
+- [MPP](https://mpp.dev/) for the machine payments protocol
