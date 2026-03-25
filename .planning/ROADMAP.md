@@ -1,9 +1,9 @@
-# agentid-core Roadmap
+# agentid Roadmap
 
 Go + Solidity reference implementation of ACK-ID with unique delegation chains and smart contracts.
 
-**Repo**: `ak68a/agentid-core`
-**Location**: `/Users/vayu/Documents/Dev/projects/agentcommercekit/agentid-core`
+**Repo**: `ak68a/agentid`
+**Location**: `/Users/vayu/Documents/Dev/projects/agentcommercekit/agentid`
 
 ---
 
