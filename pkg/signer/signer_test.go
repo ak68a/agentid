@@ -258,6 +258,20 @@ func TestVerifyDelegationChain(t *testing.T) {
 	}
 }
 
+func TestSignDelegationClaim_NilKey(t *testing.T) {
+	// A verification-only signer (nil key) must return an error, not panic
+	signer := NewClaimSigner(nil)
+	claim := createTestDelegationClaim(
+		"did:ackid:0xDelegator",
+		"did:ackid:0xDelegate",
+		"transfer", "ETH",
+	)
+
+	err := signer.SignDelegationClaim(claim)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "verification-only mode")
+}
+
 func TestHashDelegationClaim(t *testing.T) {
 	// Setup
 	rootKey, delegateKey, _ := setupTestKeys(t)
