@@ -6,8 +6,8 @@ The AgentID CLI tool provides a command-line interface for managing agent identi
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/ak68a/agentid-core.git
-cd agentid-core
+git clone https://github.com/ak68a/agentid.git
+cd agentid
 ```
 
 2. Build the CLI tool:

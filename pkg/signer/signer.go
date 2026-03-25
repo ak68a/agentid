@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ak68a/agentid-core/pkg/key"
-	"github.com/ak68a/agentid-core/pkg/models"
+	"github.com/ak68a/agentid/pkg/key"
+	"github.com/ak68a/agentid/pkg/models"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 )

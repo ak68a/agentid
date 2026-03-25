@@ -1,4 +1,4 @@
-module github.com/ak68a/agentid-core
+module github.com/ak68a/agentid
 
 go 1.24.3
 

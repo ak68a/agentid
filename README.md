@@ -1,6 +1,6 @@
-# agentid-core
+# agentid
 
-![AgentID Core](https://img.shields.io/badge/AgentID-Core-blue)
+![AgentID](https://img.shields.io/badge/AgentID-blue)
 ![Status](https://img.shields.io/badge/Status-Active%20Development-orange)
 ![License](https://img.shields.io/badge/License-Apache%202.0-green)
 
@@ -45,14 +45,14 @@ agentid-core/
 ## Quick Start
 
 ```bash
-go get github.com/ak68a/agentid-core
+go get github.com/ak68a/agentid
 ```
 
 ```go
 import (
-    "github.com/ak68a/agentid-core/pkg/key"
-    "github.com/ak68a/agentid-core/pkg/models"
-    "github.com/ak68a/agentid-core/pkg/signer"
+    "github.com/ak68a/agentid/pkg/key"
+    "github.com/ak68a/agentid/pkg/models"
+    "github.com/ak68a/agentid/pkg/signer"
 )
 
 // Generate an agent identity

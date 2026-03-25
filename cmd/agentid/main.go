@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ak68a/agentid-core/pkg/key"
-	"github.com/ak68a/agentid-core/pkg/models"
-	"github.com/ak68a/agentid-core/pkg/signer"
+	"github.com/ak68a/agentid/pkg/key"
+	"github.com/ak68a/agentid/pkg/models"
+	"github.com/ak68a/agentid/pkg/signer"
 	"github.com/urfave/cli/v2"
 )
 
