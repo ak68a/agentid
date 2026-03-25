@@ -26,8 +26,6 @@ func NewClaimSigner(agentKey *key.AgentKey) *ClaimSigner {
 
 // verifySignatureAgainstAddress verifies a signature against an Ethereum address
 func verifySignatureAgainstAddress(hash []byte, signature []byte, address string) (bool, error) {
-	fmt.Printf("DEBUG: Verifying signature of length %d\n", len(signature))
-	
 	// Ensure signature is 65 bytes (including recovery ID)
 	if len(signature) != 65 {
 		return false, fmt.Errorf("invalid signature length: expected 65 bytes, got %d", len(signature))
@@ -41,7 +39,6 @@ func verifySignatureAgainstAddress(hash []byte, signature []byte, address string
 
 	// Get the address from the public key
 	recoveredAddr := crypto.PubkeyToAddress(*pubKey)
-	fmt.Printf("DEBUG: Recovered address: %s, Expected: %s\n", recoveredAddr.Hex(), address)
 
 	// Compare with expected address
 	return recoveredAddr == common.HexToAddress(address), nil
@@ -49,6 +46,10 @@ func verifySignatureAgainstAddress(hash []byte, signature []byte, address string
 
 // SignDelegationClaim signs a DelegationClaim and adds the cryptographic proof
 func (cs *ClaimSigner) SignDelegationClaim(claim *models.DelegationClaim) error {
+	if cs.agentKey == nil {
+		return fmt.Errorf("cannot sign: signer was created without a private key (verification-only mode)")
+	}
+
 	// Create canonical hash of the claim (without proof)
 	hash, err := cs.hashDelegationClaim(claim)
 	if err != nil {
@@ -60,9 +61,6 @@ func (cs *ClaimSigner) SignDelegationClaim(claim *models.DelegationClaim) error 
 	if err != nil {
 		return fmt.Errorf("failed to sign delegation claim: %w", err)
 	}
-
-	fmt.Printf("DEBUG: Original signature length: %d\n", len(signature))
-	fmt.Printf("DEBUG: Original signature (hex): %x\n", signature)
 
 	// Add proof to the claim
 	claim.Proof = &models.CredentialProof{
@@ -112,10 +110,6 @@ func (cs *ClaimSigner) VerifyDelegationClaim(claim *models.DelegationClaim, expe
 	if err != nil {
 		return false, fmt.Errorf("failed to decode signature: %w", err)
 	}
-
-	fmt.Printf("DEBUG: Decoded signature length: %d\n", len(signature))
-	fmt.Printf("DEBUG: Decoded signature (hex): %x\n", signature)
-	fmt.Printf("DEBUG: Proof value from claim: %s\n", claim.Proof.ProofValue)
 
 	// Verify signature matches the expected address
 	return verifySignatureAgainstAddress(hash, signature, address.Hex())
